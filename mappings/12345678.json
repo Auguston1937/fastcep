@@ -1,0 +1,15 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/consulta_cep/12345678"
+    },
+    "response": {
+        "status": 404,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "jsonBody": {
+            "message": "CEP não localizado!"
+        }
+    }
+}

@@ -1,0 +1,50 @@
+services:
+  mysqldb:
+    image: mysql:8.0.36
+    container_name: mysqldb
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: fastcep
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_PASSWORD: 1234
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p1234" ]
+      timeout: 10s
+      retries: 10
+    volumes:
+      - mysql-data:/var/lib/mysql
+  wiremock:
+    image: wiremock/wiremock:3.13.2-2
+    container_name: wiremock
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./mappings:/home/wiremock/mappings
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: desafio-app:latest
+    container_name: desafio-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_HOST=mysqldb
+      - SPRING_DATASOURCE_PORT=3306
+      - SPRING_DATASOURCE_DB=fastcep
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=1234
+      - WIREMOCK_URL=http://wiremock:8080
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      wiremock:
+        condition: service_started
+
+volumes:
+  mysql-data:

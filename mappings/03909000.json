@@ -1,0 +1,19 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/consulta_cep/03909000"
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "jsonBody": {
+            "cep": "03909-000",
+            "logradouro": "Rua Tuma Maluly",
+            "bairro": "Aricanduva",
+            "cidade": "São Paulo",
+            "estado": "SP"
+        }
+    }
+}

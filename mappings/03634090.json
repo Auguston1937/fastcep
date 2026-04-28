@@ -1,0 +1,19 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/consulta_cep/03634090"
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "jsonBody": {
+            "cep": "03634-090",
+            "logradouro": "Rua Matusalem Matoso",
+            "bairro": "Penha de França",
+            "cidade": "São Paulo",
+            "estado": "SP"
+        }
+    }
+}
