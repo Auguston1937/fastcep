@@ -1,9 +1,9 @@
 package br.com.fastcep.cep.resource;
 
-import br.com.fastcep.cep.entity.Cep;
 import br.com.fastcep.cep.dto.CepDTO;
+import br.com.fastcep.cep.dto.CepHistoricoDTO;
 import br.com.fastcep.cep.exceptions.CepInvalidoException;
-import br.com.fastcep.cep.service.ConsultaCepService;
+import br.com.fastcep.cep.service.ConsultaCepUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ class ConsultaCepResourceTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private ConsultaCepService consultaCepService;
+    private ConsultaCepUseCase consultaCepUseCase;
 
     private CepDTO validCepDTO;
 
@@ -47,7 +47,7 @@ class ConsultaCepResourceTest {
     @Test
     void deveRetornar200OKComCepValido() throws Exception {
         String cep = "01310100";
-        when(consultaCepService.consultaCep(cep)).thenReturn(validCepDTO);
+        when(consultaCepUseCase.consultarCep(cep)).thenReturn(validCepDTO);
 
         mockMvc.perform(get("/consulta_cep/{valorCep}", cep)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -58,26 +58,26 @@ class ConsultaCepResourceTest {
                 .andExpect(jsonPath("$.cidade", is("São Paulo")))
                 .andExpect(jsonPath("$.estado", is("SP")));
 
-        verify(consultaCepService, times(1)).consultaCep(cep);
+        verify(consultaCepUseCase, times(1)).consultarCep(cep);
     }
 
     @Test
     void deveRetornarExcecaoParaCepInvalido() throws Exception {
         String cep = "0";
-        when(consultaCepService.consultaCep(cep))
+        when(consultaCepUseCase.consultarCep(cep))
                 .thenThrow(new CepInvalidoException("CEP inválido"));
 
         mockMvc.perform(get("/consulta_cep/{valorCep}", cep)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
 
-        verify(consultaCepService, times(1)).consultaCep(cep);
+        verify(consultaCepUseCase, times(1)).consultarCep(cep);
     }
 
     @Test
     void deveRetornaExcecaoParaCepNaoEncontrado() throws Exception {
         String cep = "99999999";
-        when(consultaCepService.consultaCep(cep))
+        when(consultaCepUseCase.consultarCep(cep))
                 .thenThrow(new CepInvalidoException("CEP não encontrado"));
 
         mockMvc.perform(get("/consulta_cep/{valorCep}", cep)
@@ -87,28 +87,26 @@ class ConsultaCepResourceTest {
 
     @Test
     void testConsultaHistoricoCepWithData() throws Exception {
-        Cep cep1 = Cep.builder()
-                .id(1L)
-                .cep("01310100")
-                .logradouro("Avenida Paulista")
-                .bairro("Bela Vista")
-                .cidade("São Paulo")
-                .estado("SP")
-                .dataHora("2024-04-27T10:00:00")
-                .build();
+        CepHistoricoDTO cep1 = new CepHistoricoDTO(
+                "01310100",
+                "Avenida Paulista",
+                "Bela Vista",
+                "São Paulo",
+                "SP",
+                "2024-04-27T10:00:00"
+        );
 
-        Cep cep2 = Cep.builder()
-                .id(2L)
-                .cep("20040020")
-                .logradouro("Avenida Rio Branco")
-                .bairro("Centro")
-                .cidade("Rio de Janeiro")
-                .estado("RJ")
-                .dataHora("2024-04-27T11:00:00")
-                .build();
+        CepHistoricoDTO cep2 = new CepHistoricoDTO(
+                "20040020",
+                "Avenida Rio Branco",
+                "Centro",
+                "Rio de Janeiro",
+                "RJ",
+                "2024-04-27T11:00:00"
+        );
 
-        List<Cep> historicoCeps = Arrays.asList(cep1, cep2);
-        when(consultaCepService.consultaHistoricoCep()).thenReturn(historicoCeps);
+        List<CepHistoricoDTO> historicoCeps = Arrays.asList(cep1, cep2);
+        when(consultaCepUseCase.consultarHistoricoCep()).thenReturn(historicoCeps);
 
         mockMvc.perform(get("/consulta_cep")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -116,12 +114,13 @@ class ConsultaCepResourceTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].cep", is("01310100")))
                 .andExpect(jsonPath("$[0].logradouro", is("Avenida Paulista")))
+                .andExpect(jsonPath("$[0].dataHora", is("2024-04-27T10:00:00")))
                 .andExpect(jsonPath("$[1].cep", is("20040020")))
-                .andExpect(jsonPath("$[1].logradouro", is("Avenida Rio Branco")));
+                .andExpect(jsonPath("$[1].logradouro", is("Avenida Rio Branco")))
+                .andExpect(jsonPath("$[1].dataHora", is("2024-04-27T11:00:00")));
 
-        verify(consultaCepService, times(1)).consultaHistoricoCep();
+        verify(consultaCepUseCase, times(1)).consultarHistoricoCep();
     }
 
 }
-
 

@@ -1,4 +1,4 @@
-package br.com.fastcep.service.utils;
+package br.com.fastcep.cep.gateway;
 
 import br.com.fastcep.cep.exceptions.CepInvalidoException;
 import org.slf4j.Logger;
@@ -10,7 +10,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class RestTemplateService {
+public class RestTemplateService implements CepApiClient {
 
     private static final Logger log = LoggerFactory.getLogger(RestTemplateService.class);
     private final String wiremockUrl;
@@ -33,3 +33,4 @@ public class RestTemplateService {
     }
 
 }
+

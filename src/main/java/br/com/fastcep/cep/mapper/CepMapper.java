@@ -2,6 +2,7 @@ package br.com.fastcep.cep.mapper;
 
 import br.com.fastcep.cep.entity.Cep;
 import br.com.fastcep.cep.dto.CepDTO;
+import br.com.fastcep.cep.dto.CepHistoricoDTO;
 import br.com.fastcep.cep.exceptions.CepInvalidoException;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -47,6 +48,14 @@ public class CepMapper {
         return cep;
     }
 
+    public CepHistoricoDTO entityToHistoricoDTO(Cep entity) {
+        return new CepHistoricoDTO(
+                entity.getCep(),
+                entity.getLogradouro(),
+                entity.getBairro(),
+                entity.getCidade(),
+                entity.getEstado(),
+                entity.getDataHora()
+        );
+    }
 }
-
-

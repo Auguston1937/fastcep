@@ -1,7 +1,6 @@
-package br.com.fastcep.utils;
+package br.com.fastcep.cep.gateway;
 
 import br.com.fastcep.cep.exceptions.CepInvalidoException;
-import br.com.fastcep.service.utils.RestTemplateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,3 +40,4 @@ class RestTemplateServiceTest {
     }
 
 }
+
